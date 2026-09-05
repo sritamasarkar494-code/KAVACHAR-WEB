@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard | KavachAR
+{% endblock %}
+
+{% block page_title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================
+     WELCOME
+========================== -->
+
+<div class="welcome">
+
+    <h1>
+        👋 Welcome back, {{ user.first_name|default:user.username }}
+    </h1>
+
+    <p>
+        Monitor worker safety training and competency.
+    </p>
+
+</div>
+
+
+<!-- =========================
+     STATISTICS
+========================== -->
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <span>👷</span>
+        <h3>{{ total_workers }}</h3>
+        <p>Total Workers</p>
+    </div>
+
+
+    <div class="stat-card">
+        <span>🟢</span>
+        <h3>{{ active_workers }}</h3>
+        <p>Active Workers</p>
+    </div>
+
+
+    <div class="stat-card">
+        <span>✅</span>
+        <h3>{{ completed_training }}</h3>
+        <p>Completed Training</p>
+    </div>
+
+
+    <div class="stat-card">
+        <span>🪪</span>
+        <h3>{{ certificates_issued }}</h3>
+        <p>Certificates Issued</p>
+    </div>
+
+
+    <div class="stat-card">
+        <span>⏳</span>
+        <h3>{{ certificates_pending }}</h3>
+        <p>Certificates Pending</p>
+    </div>
+
+
+    <div class="stat-card">
+        <span>📊</span>
+        <h3>{{ average_score|floatformat:1 }}%</h3>
+        <p>Average Score</p>
+    </div>
+
+</div>
+
+
+<!-- =========================
+     QUICK ACTIONS
+========================== -->
+
+<div class="quick-actions">
+
+    <h2>
+        Quick Actions
+    </h2>
+
+
+    <div class="action-grid">
+
+        <!-- Workers -->
+
+        <a
+            href="{% url 'workers' %}"
+            class="action-card"
+        >
+
+            <span class="action-icon">
+                👷
+            </span>
+
+            <strong>
+                Workers
+            </strong>
+
+            <span>
+                View all workers
+            </span>
+
+        </a>
+
+
+        <!-- Certificates -->
+
+        <a
+            href="{% url 'certificates' %}"
+            class="action-card"
+        >
+
+            <span class="action-icon">
+                📜
+            </span>
+
+            <strong>
+                Certificates
+            </strong>
+
+            <span>
+                View certificates
+            </span>
+
+        </a>
+
+
+        <!-- Analytics -->
+
+        <a
+            href="{% url 'analytics' %}"
+            class="action-card"
+        >
+
+            <span class="action-icon">
+                📊
+            </span>
+
+            <strong>
+                Analytics
+            </strong>
+
+            <span>
+                View performance
+            </span>
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

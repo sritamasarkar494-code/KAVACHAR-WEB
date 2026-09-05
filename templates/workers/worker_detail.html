@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block title %}
+Worker | SurakshaAR
+{% endblock %}
+
+{% block page_title %}
+Worker Details
+{% endblock %}
+
+{% block content %}
+
+
+<!-- =========================================================
+     WORKER INFORMATION
+========================================================= -->
+
+<div class="detail-card">
+
+    <h1>
+        👷 {{ worker.name }}
+    </h1>
+
+    <p>
+        <strong>Worker ID:</strong>
+        {{ worker.workerId }}
+    </p>
+
+    <p>
+        <strong>Phone:</strong>
+        {{ worker.phone|default:"-" }}
+    </p>
+
+    <p>
+        <strong>Organization:</strong>
+        {{ worker.organization|default:"-" }}
+    </p>
+
+    <p>
+        <strong>Sector:</strong>
+        {{ worker.sector|default:"-" }}
+    </p>
+
+    <p>
+        <strong>Language:</strong>
+        {{ worker.language|default:"-" }}
+    </p>
+
+    <p>
+        <strong>Training Progress:</strong>
+        {{ worker.progress|default:0 }}%
+    </p>
+
+    <p>
+
+        <strong>Status:</strong>
+
+        {% if worker.status == "Active" %}
+
+            🟢 Active
+
+        {% elif worker.status == "Completed" %}
+
+            ✅ Completed
+
+        {% elif worker.status == "Inactive" %}
+
+            🔴 Inactive
+
+        {% else %}
+
+            {{ worker.status|default:"-" }}
+
+        {% endif %}
+
+    </p>
+
+</div>
+
+
+<br>
+
+
+<!-- =========================================================
+     TRAINING ATTEMPTS
+========================================================= -->
+
+<h2>
+    🎯 Training Attempts
+</h2>
+
+
+<div class="table-container">
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>Module</th>
+                <th>Score</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for attempt in attempts %}
+
+            <tr>
+
+                <td>
+                    {{ attempt.moduleTitle }}
+                </td>
+
+                <td>
+                    {{ attempt.score }}%
+                </td>
+
+                <td>
+
+                    {% if attempt.status == "Passed" %}
+
+                        ✅ Passed
+
+                    {% elif attempt.status == "Failed" %}
+
+                        ❌ Failed
+
+                    {% else %}
+
+                        {{ attempt.status }}
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+                    {{ attempt.date|default:"-" }}
+                </td>
+
+            </tr>
+
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="4">
+                    No training attempts found.
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<br>
+
+
+<!-- =========================================================
+     CERTIFICATES
+========================================================= -->
+
+<h2>
+    🪪 Certificates
+</h2>
+
+
+<div class="table-container">
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>Certificate ID</th>
+                <th>Module</th>
+                <th>Score</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for certificate in certificates %}
+
+            <tr>
+
+                <td>
+                    {{ certificate.certificateId }}
+                </td>
+
+                <td>
+                    {{ certificate.moduleTitle }}
+                </td>
+
+                <td>
+                    {{ certificate.score }}%
+                </td>
+
+                <td>
+
+                    {% if certificate.status == "Verified" %}
+
+                        🟢 Verified
+
+                    {% elif certificate.status == "Pending" %}
+
+                        🟡 Pending
+
+                    {% elif certificate.status == "Revoked" %}
+
+                        🔴 Revoked
+
+                    {% else %}
+
+                        {{ certificate.status }}
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    <a
+                        href="{% url 'certificate-detail' certificate.certificateId %}"
+                        class="btn btn-small"
+                    >
+                        View
+                    </a>
+
+                </td>
+
+            </tr>
+
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="5">
+                    No certificates found.
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<br>
+
+
+<!-- =========================================================
+     BACK BUTTON
+========================================================= -->
+
+<a
+    href="{% url 'workers' %}"
+    class="btn"
+>
+    ← Back to Workers
+</a>
+
+
+{% endblock %}

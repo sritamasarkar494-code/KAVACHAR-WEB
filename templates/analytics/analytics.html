@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}
+Analytics | SurakshaAR
+{% endblock %}
+
+{% block page_title %}
+Analytics
+{% endblock %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+<div class="page-header-block">
+    <h2>📊 Analytics</h2>
+    <p>Monitor worker training performance and certification statistics.</p>
+</div>
+
+<!-- PRIMARY STATS -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-icon">👷</span>
+        <h3>{{ analytics.total_workers }}</h3>
+        <p>Total Workers</p>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-icon">🟢</span>
+        <h3>{{ analytics.active_workers }}</h3>
+        <p>Active Workers</p>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-icon">🎓</span>
+        <h3>{{ analytics.completed_training }}</h3>
+        <p>Completed Training</p>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-icon">🪪</span>
+        <h3>{{ analytics.certificates_issued }}</h3>
+        <p>Certificates Issued</p>
+    </div>
+</div>
+
+<!-- SECONDARY STATS -->
+<div class="stats-grid" style="margin-top: 20px;">
+    <div class="stat-card">
+        <span class="stat-icon">⏳</span>
+        <h3>{{ analytics.certificates_pending }}</h3>
+        <p>Certificates Pending</p>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-icon">📈</span>
+        <h3>{{ analytics.average_score|floatformat:1 }}%</h3>
+        <p>Average Score</p>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-icon">✅</span>
+        <h3>{{ analytics.passed_attempts }}</h3>
+        <p>Passed Attempts</p>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-icon">❌</span>
+        <h3>{{ analytics.failed_attempts }}</h3>
+        <p>Failed Attempts</p>
+    </div>
+</div>
+
+<!-- ANALYTICS HIGHLIGHTS SECTION -->
+<div class="analytics-layout">
+    
+    <!-- Training Completion Gauge Card -->
+    <div class="detail-card completion-card">
+        <div class="card-title">
+            <span>🎯</span>
+            <h2>Training Completion</h2>
+        </div>
+        <p class="card-description">Overall training completion rate across all registered workers:</p>
+        
+        <div class="completion-rate-display">
+            <span class="rate-number">{{ analytics.completion_rate|floatformat:1 }}%</span>
+        </div>
+        
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="--completion-width: {{ analytics.completion_rate|floatformat:1 }}%;"></div>
+        </div>
+    </div>
+
+    <!-- Performance Summary Card -->
+    <div class="detail-card summary-card">
+        <div class="card-title">
+            <span>📋</span>
+            <h2>Performance Summary</h2>
+        </div>
+
+        <div class="summary-list">
+            <div class="summary-item">
+                <span class="summary-label">Total Workers</span>
+                <span class="summary-value">{{ analytics.total_workers }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Active Workers</span>
+                <span class="summary-value">{{ analytics.active_workers }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Completed Training</span>
+                <span class="summary-value">{{ analytics.completed_training }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Average Score</span>
+                <span class="summary-value">{{ analytics.average_score|floatformat:1 }}%</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Passed Attempts</span>
+                <span class="summary-value text-success">{{ analytics.passed_attempts }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Failed Attempts</span>
+                <span class="summary-value text-danger">{{ analytics.failed_attempts }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Certificates Issued</span>
+                <span class="summary-value">{{ analytics.certificates_issued }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Certificates Pending</span>
+                <span class="summary-value text-warning">{{ analytics.certificates_pending }}</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

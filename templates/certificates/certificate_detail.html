@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}
+Certificate | KavachAR
+{% endblock %}
+
+{% block page_title %}
+Certificate Details
+{% endblock %}
+
+{% block content %}
+
+<div class="certificate-card">
+
+    <div class="certificate-header">
+        🛡️ KAVACHAR
+    </div>
+
+
+    <h1>
+        COMPETENCY CERTIFICATE
+    </h1>
+
+
+    <p>
+        This certifies that
+    </p>
+
+
+    <h2>
+        {{ certificate.workerName }}
+    </h2>
+
+
+    <p>
+        has successfully completed the required safety training.
+    </p>
+
+
+    <div class="certificate-score">
+
+        {{ certificate.score }}%
+
+    </div>
+
+
+    <p>
+        Certificate ID:
+        <strong>
+            {{ certificate.certificateId }}
+        </strong>
+    </p>
+
+
+    <p>
+        Status:
+
+        {% if certificate.status == "Verified" %}
+
+            🟢 Verified
+
+        {% elif certificate.status == "Pending" %}
+
+            🟡 Pending
+
+        {% elif certificate.status == "Revoked" %}
+
+            🔴 Revoked
+
+        {% else %}
+
+            {{ certificate.status }}
+
+        {% endif %}
+
+    </p>
+
+
+    <!-- =========================
+         VERIFY CERTIFICATE
+    ========================== -->
+
+    {% if certificate.status != "Verified" %}
+
+        <form
+            method="post"
+            action="{% url 'verify-certificate' certificate.certificateId %}"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                🔍 Verify Certificate
+            </button>
+
+        </form>
+
+    {% else %}
+
+        <div class="message success">
+            ✅ Certificate has been verified.
+        </div>
+
+    {% endif %}
+
+
+    <br>
+
+
+    <a
+        href="{% url 'certificates' %}"
+        class="btn"
+    >
+        ← Back to Certificates
+    </a>
+
+</div>
+
+{% endblock %}

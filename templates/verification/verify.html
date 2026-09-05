@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}
+Verify Certificate | SurakshaAR
+{% endblock %}
+
+{% block page_title %}
+Certificate Verification
+{% endblock %}
+
+{% block content %}
+
+<div class="verify-container">
+
+    <h1>
+        🔍 Verify Certificate
+    </h1>
+
+    <p>
+        Enter a certificate ID to verify its authenticity.
+    </p>
+
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="form-group">
+
+            <label>
+                Certificate ID
+            </label>
+
+            <input
+                type="text"
+                name="certificate_id"
+                placeholder="Enter certificate ID"
+                required
+            >
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+            🔍 Verify
+        </button>
+
+    </form>
+
+
+    {% if certificate %}
+
+    <div class="verification-result">
+
+        {% if certificate.status == "active" %}
+
+            <div class="verification-success">
+
+                <h2>
+                    ✅ VALID CERTIFICATE
+                </h2>
+
+                <p>
+                    Certificate ID:
+                    {{ certificate.certificate_id }}
+                </p>
+
+                <p>
+                    Worker:
+                    {{ certificate.worker.full_name }}
+                </p>
+
+                <p>
+                    Module:
+                    {{ certificate.module.title }}
+                </p>
+
+                <p>
+                    Score:
+                    {{ certificate.score }}%
+                </p>
+
+                <p>
+                    Issued:
+                    {{ certificate.issued_at|date:"d M Y" }}
+                </p>
+
+            </div>
+
+        {% else %}
+
+            <div class="verification-failed">
+
+                <h2>
+                    ❌ CERTIFICATE NOT ACTIVE
+                </h2>
+
+                <p>
+                    Current status:
+                    {{ certificate.status }}
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

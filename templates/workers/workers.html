@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}
+Workers | SurakshaAR
+{% endblock %}
+
+{% block page_title %}
+Workers
+{% endblock %}
+
+{% block content %}
+
+<div class="section-header">
+
+    <div>
+        <h1>
+            👷 Workers
+        </h1>
+
+        <p>
+            Registered workers and training participants.
+        </p>
+    </div>
+
+</div>
+
+
+<div class="table-container">
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>Worker ID</th>
+                <th>Name</th>
+                <th>Organization</th>
+                <th>Sector</th>
+                <th>Language</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for worker in workers %}
+
+            <tr>
+
+                <td>
+                    {{ worker.workerId }}
+                </td>
+
+                <td>
+                    {{ worker.name }}
+                </td>
+
+                <td>
+                    {{ worker.organization|default:"-" }}
+                </td>
+
+                <td>
+                    {{ worker.sector|default:"-" }}
+                </td>
+
+                <td>
+                    {{ worker.language|default:"-" }}
+                </td>
+
+                <td>
+                    {{ worker.progress|default:0 }}%
+                </td>
+
+                <td>
+
+                    {% if worker.status == "Active" %}
+
+                        🟢 Active
+
+                    {% elif worker.status == "Completed" %}
+
+                        ✅ Completed
+
+                    {% elif worker.status == "Inactive" %}
+
+                        🔴 Inactive
+
+                    {% else %}
+
+                        {{ worker.status|default:"-" }}
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    <a
+                        href="{% url 'worker-detail' worker.workerId %}"
+                        class="btn btn-small"
+                    >
+                        View
+                    </a>
+
+                </td>
+
+            </tr>
+
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="8">
+                    No workers found.
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

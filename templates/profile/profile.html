@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}
+Profile | KavachAR
+{% endblock %}
+
+
+{% block content %}
+
+<div class="section-header">
+    <div>
+        <h1>👤 Admin Profile</h1>
+        <p>View your administrator account information.</p>
+    </div>
+</div>
+
+
+<div class="detail-card">
+
+    <h2>👤 Account Information</h2>
+
+    <br>
+
+    <p>
+        <strong>Username:</strong>
+        {{ admin.username|default:"Not provided" }}
+    </p>
+
+    <p>
+        <strong>Email:</strong>
+        {{ admin.email|default:"Not provided" }}
+    </p>
+
+    <p>
+        <strong>First Name:</strong>
+        {{ admin.first_name|default:"Not provided" }}
+    </p>
+
+    <p>
+        <strong>Last Name:</strong>
+        {{ admin.last_name|default:"Not provided" }}
+    </p>
+
+    <p>
+        <strong>Full Name:</strong>
+
+        {% if admin.first_name or admin.last_name %}
+            {{ admin.first_name }} {{ admin.last_name }}
+        {% else %}
+            Not provided
+        {% endif %}
+    </p>
+
+</div>
+
+
+<br>
+
+
+<div class="detail-card">
+
+    <h2>🔐 Account & Access</h2>
+
+    <br>
+
+    <p>
+        <strong>Account Type:</strong>
+
+        {% if admin.is_superuser %}
+            Super Administrator
+        {% elif admin.is_staff %}
+            Administrator
+        {% else %}
+            User
+        {% endif %}
+    </p>
+
+    <p>
+        <strong>Staff Access:</strong>
+
+        {% if admin.is_staff %}
+            🟢 Enabled
+        {% else %}
+            🔴 Disabled
+        {% endif %}
+    </p>
+
+    <p>
+        <strong>Superuser Access:</strong>
+
+        {% if admin.is_superuser %}
+            🟢 Enabled
+        {% else %}
+            ⚪ Not enabled
+        {% endif %}
+    </p>
+
+    <p>
+        <strong>Account Created:</strong>
+
+        {% if admin.date_joined %}
+            {{ admin.date_joined|date:"d M Y, h:i A" }}
+        {% else %}
+            Not available
+        {% endif %}
+    </p>
+
+    <p>
+        <strong>Last Login:</strong>
+
+        {% if admin.last_login %}
+            {{ admin.last_login|date:"d M Y, h:i A" }}
+        {% else %}
+            Not available
+        {% endif %}
+    </p>
+
+</div>
+
+
+<br>
+
+
+<div class="detail-card">
+
+    <h2>🏢 Administrator</h2>
+
+    <br>
+
+    <p>
+        You are currently logged in as an administrator of the
+        SurakshaAR admin panel.
+    </p>
+
+    {% if admin.is_superuser %}
+        <p>
+            You have <strong>Super Administrator</strong> privileges.
+        </p>
+    {% else %}
+        <p>
+            You have <strong>Administrator</strong> privileges.
+        </p>
+    {% endif %}
+
+</div>
+
+{% endblock %}
