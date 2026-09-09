@@ -31,8 +31,10 @@ Certificates
 
             <tr>
                 <th>Certificate ID</th>
-                <th>Worker</th>
-                <th>Score</th>
+                <th>Recipient</th>
+                <th>User ID</th>
+                <th>Certificate</th>
+                <th>Issued At</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
@@ -51,24 +53,28 @@ Certificates
                 </td>
 
                 <td>
-                    {{ certificate.workerName }}
+                    {{ certificate.recipientName }}
                 </td>
 
                 <td>
-                    {{ certificate.score }}%
+                    {{ certificate.userId }}
+                </td>
+
+                <td>
+                    {{ certificate.certificateTitle }}
+                </td>
+
+                <td>
+                    {{ certificate.issuedAt }}
                 </td>
 
                 <td>
 
-                    {% if certificate.status == "Verified" %}
+                    {% if certificate.status == "VALID" %}
 
-                        🟢 Verified
+                        🟢 Valid
 
-                    {% elif certificate.status == "Pending" %}
-
-                        🟡 Pending
-
-                    {% elif certificate.status == "Revoked" %}
+                    {% elif certificate.status == "REVOKED" %}
 
                         🔴 Revoked
 
@@ -98,7 +104,7 @@ Certificates
 
             <tr>
 
-                <td colspan="5">
+                <td colspan="7">
                     No certificates found.
                 </td>
 

@@ -28,7 +28,7 @@ Certificate Details
 
 
     <h2>
-        {{ certificate.workerName }}
+        {{ certificate.recipientName }}
     </h2>
 
 
@@ -39,31 +39,43 @@ Certificate Details
 
     <div class="certificate-score">
 
-        {{ certificate.score }}%
+        {{ certificate.certificateTitle }}
 
     </div>
 
 
     <p>
-        Certificate ID:
-        <strong>
-            {{ certificate.certificateId }}
-        </strong>
+        <strong>Certificate ID:</strong>
+        {{ certificate.certificateId }}
     </p>
 
 
     <p>
-        Status:
+        <strong>User ID:</strong>
+        {{ certificate.userId }}
+    </p>
 
-        {% if certificate.status == "Verified" %}
 
-            🟢 Verified
+    <p>
+        <strong>Certificate:</strong>
+        {{ certificate.certificateTitle }}
+    </p>
 
-        {% elif certificate.status == "Pending" %}
 
-            🟡 Pending
+    <p>
+        <strong>Issued At:</strong>
+        {{ certificate.issuedAt }}
+    </p>
 
-        {% elif certificate.status == "Revoked" %}
+
+    <p>
+        <strong>Status:</strong>
+
+        {% if certificate.status == "VALID" %}
+
+            🟢 Valid
+
+        {% elif certificate.status == "REVOKED" %}
 
             🔴 Revoked
 
@@ -80,7 +92,7 @@ Certificate Details
          VERIFY CERTIFICATE
     ========================== -->
 
-    {% if certificate.status != "Verified" %}
+    {% if certificate.status != "VALID" %}
 
         <form
             method="post"
@@ -101,8 +113,29 @@ Certificate Details
     {% else %}
 
         <div class="message success">
-            ✅ Certificate has been verified.
+            ✅ Certificate is currently marked as valid.
         </div>
+
+        <p style="margin-top: 15px;">
+            You can verify the certificate again to retrieve the
+            latest verification result and QR code.
+        </p>
+
+        <form
+            method="post"
+            action="{% url 'verify-certificate' certificate.certificateId %}"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                🔍 Verify & Generate QR
+            </button>
+
+        </form>
 
     {% endif %}
 

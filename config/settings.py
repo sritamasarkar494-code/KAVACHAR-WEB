@@ -137,5 +137,7 @@ LOGOUT_REDIRECT_URL = "/dashboard/login/"
 
 SPRING_BOOT_BASE_URL = os.getenv(
     "SPRING_BOOT_BASE_URL",
-    "http://localhost:8080"
+    "https://kavachar-backend.onrender.com"
 )
+
+DJANGO_SERVICE_TOKEN = os.getenv("DJANGO_SERVICE_TOKEN")

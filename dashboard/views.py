@@ -1,24 +1,26 @@
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
-from .services.springboot import get_from_spring, post_to_spring
+import base64
+
+from .services.springboot import get_from_spring
+from .services.certificate_api import (
+    CertificateAPIError,
+    verify_certificate,
+    get_certificate_qr,
+)
 
 
-# --------------------------------------------------
+# ============================================================
 # ADMIN ACCESS
-# --------------------------------------------------
+# ============================================================
 
 def admin_required(view_func):
-    """
-    Allow only Django staff/superuser accounts
-    to access the admin dashboard.
-    """
     @login_required
     def wrapper(request, *args, **kwargs):
         if not (request.user.is_staff or request.user.is_superuser):
@@ -30,10 +32,6 @@ def admin_required(view_func):
 
 
 class AdminLoginView(LoginView):
-    """
-    Login page for Django administrators only.
-    """
-
     template_name = "dashboard/login.html"
     redirect_authenticated_user = True
 
@@ -46,21 +44,18 @@ class AdminLoginView(LoginView):
                 "You are not authorized to access the admin panel."
             )
             return self.form_invalid(form)
-# AUTHENTICATE / LOGIN
+
         login(self.request, user)
+
         return redirect("admin-dashboard")
 
 
-# --------------------------------------------------
+# ============================================================
 # DASHBOARD
-# --------------------------------------------------
+# ============================================================
 
 @admin_required
 def dashboard_view(request):
-    """
-    Get dashboard data from Spring Boot
-    and display it.
-    """
     data = {
         "total_workers": 248,
         "completed_training": 192,
@@ -71,31 +66,18 @@ def dashboard_view(request):
     return render(
         request,
         "dashboard/dashboard.html",
-        {"data": data},
+        {
+            "data": data
+        }
     )
 
-    #data = get_from_spring("/api/admin/dashboard")
 
-    ###return render(
-        #request,
-        #"dashboard/dashboard.html",
-        #{
-           # "data": data,
-        #},
-    #)
-
-
-# --------------------------------------------------
+# ============================================================
 # WORKERS
-# --------------------------------------------------
+# ============================================================
 
 @admin_required
 def workers_view(request):
-    """
-    Get workers from Spring Boot.
-    """
-
-    #workers = get_from_spring("/api/admin/workers")
     workers = [
         {
             "workerId": "W001",
@@ -123,27 +105,17 @@ def workers_view(request):
         },
     ]
 
-
     return render(
         request,
         "workers/workers.html",
         {
-            "workers": workers,
-        },
+            "workers": workers
+        }
     )
 
 
 @admin_required
 def worker_detail_view(request, worker_id):
-    """
-    Get one worker's details from Spring Boot.
-    """
-# REAL SPRING BOOT IMPLEMENTATION
-    #worker = get_from_spring(
-        #f"/api/admin/workers/{worker_id}"
-   # )
-   #attempts = worker.get("attempts", [])
-    # certificates = worker.get("certificates", [])
     workers = {
         "W001": {
             "workerId": "W001",
@@ -153,7 +125,6 @@ def worker_detail_view(request, worker_id):
             "progress": 90,
             "status": "Active",
         },
-
         "W002": {
             "workerId": "W002",
             "name": "Amit Singh",
@@ -162,7 +133,6 @@ def worker_detail_view(request, worker_id):
             "progress": 75,
             "status": "Active",
         },
-
         "W003": {
             "workerId": "W003",
             "name": "Sunita Devi",
@@ -172,8 +142,6 @@ def worker_detail_view(request, worker_id):
             "status": "Completed",
         },
     }
-    # Demo training attempts
-    # ---------------------------------------------------------
 
     attempts = {
         "W001": [
@@ -196,7 +164,6 @@ def worker_detail_view(request, worker_id):
                 "date": "04 Sep 2026",
             },
         ],
-
         "W002": [
             {
                 "moduleTitle": "Fire Safety",
@@ -211,7 +178,6 @@ def worker_detail_view(request, worker_id):
                 "date": "03 Sep 2026",
             },
         ],
-
         "W003": [
             {
                 "moduleTitle": "Fire Safety",
@@ -227,19 +193,16 @@ def worker_detail_view(request, worker_id):
             },
         ],
     }
-    # Demo certificates
-    # ---------------------------------------------------------
 
     certificates = {
         "W001": [
             {
-                "certificateId": "CERT001",
+                "certificateId": "KVR-2C1F3D5DBA7145C98E92A5C427A455E3",
                 "moduleTitle": "Fire Safety",
                 "score": 92,
-                "status": "Verified",
+                "status": "Pending",
             },
         ],
-
         "W002": [
             {
                 "certificateId": "CERT002",
@@ -248,7 +211,6 @@ def worker_detail_view(request, worker_id):
                 "status": "Pending",
             },
         ],
-
         "W003": [
             {
                 "certificateId": "CERT003",
@@ -258,13 +220,6 @@ def worker_detail_view(request, worker_id):
             },
         ],
     }
-
-
-     # GET DATA FOR THIS PARTICULAR WORKER
-    # =========================================================
-
-    worker_attempts = attempts.get(worker_id, [])
-    worker_certificates = certificates.get(worker_id, [])
 
     worker = workers.get(
         worker_id,
@@ -277,6 +232,10 @@ def worker_detail_view(request, worker_id):
             "status": "Unknown",
         },
     )
+
+    worker_attempts = attempts.get(worker_id, [])
+    worker_certificates = certificates.get(worker_id, [])
+
     return render(
         request,
         "workers/worker_detail.html",
@@ -288,51 +247,56 @@ def worker_detail_view(request, worker_id):
     )
 
 
-# --------------------------------------------------
+# ============================================================
 # CERTIFICATES
-# --------------------------------------------------
+# ============================================================
 
 @admin_required
 def certificates_view(request):
     """
-    Get certificates from Spring Boot.
-    """
+    Get ALL certificates from the Spring Boot backend.
 
-    #certificates = get_from_spring(
-       # "/api/admin/certificates"
-    #)
-    certificates = [
+    Spring Boot endpoint:
+    GET /api/auth/cert-verification/certificates
+
+    The backend returns a list like:
+
+    [
         {
-            "certificateId": "CERT001",
-            "workerName": "Rahul Kumar",
-            "score": 92,
-            "status": "Verified",
-        },
-        {
-            "certificateId": "CERT002",
-            "workerName": "Amit Singh",
-            "score": 85,
-            "status": "Pending",
-        },
-        {
-            "certificateId": "CERT003",
-            "workerName": "Sunita Devi",
-            "score": 96,
-            "status": "Verified",
-        },
+            "certificateId": "...",
+            "userId": "...",
+            "recipientName": "...",
+            "certificateTitle": "...",
+            "issuedAt": "...",
+            "verificationUrl": "...",
+            "status": "VALID"
+        }
     ]
 
-    return render(
-        request,
-        "certificates/certificates.html",
-        {"certificates": certificates},
-    )
+    No certificate IDs are hard-coded here.
+    """
+
+    try:
+        certificates = get_from_spring(
+            "/api/auth/cert-verification/certificates"
+        )
+
+        # The endpoint currently returns a JSON list.
+        if not isinstance(certificates, list):
+            certificates = []
+
+    except Exception as exc:
+        messages.error(
+            request,
+            f"Could not load certificates: {exc}"
+        )
+        certificates = []
 
     return render(
         request,
         "certificates/certificates.html",
         {
-            "certificates": certificates,
+            "certificates": certificates
         },
     )
 
@@ -340,73 +304,152 @@ def certificates_view(request):
 @admin_required
 def certificate_detail_view(request, certificate_id):
     """
-    Get one certificate from Spring Boot.
+    Display details of one certificate.
+
+    IMPORTANT:
+    The certificate ID comes from the certificates list returned
+    by Spring Boot. It is NOT hard-coded.
+
+    We first load all certificates and find the matching certificate.
+    This avoids assuming that a separate
+    /certificates/{certificate_id} endpoint exists.
     """
 
-    #certificate = get_from_spring(
-       # f"/api/admin/certificates/{certificate_id}"
-    #)
-    certificate = {
-        "certificateId": certificate_id,
-        "workerName": "Rahul Kumar",
-        "score": 92,
-        "status": "Pending",
-    }
+    try:
+        certificates = get_from_spring(
+            "/api/auth/cert-verification/certificates"
+        )
 
+        if not isinstance(certificates, list):
+            certificates = []
+
+    except Exception as exc:
+        messages.error(
+            request,
+            f"Could not load certificates: {exc}"
+        )
+        return redirect("certificates")
+
+    certificate = None
+
+    for item in certificates:
+        if item.get("certificateId") == certificate_id:
+            certificate = item
+            break
+
+    if certificate is None:
+        messages.error(
+            request,
+            "Certificate not found."
+        )
+        return redirect("certificates")
 
     return render(
         request,
         "certificates/certificate_detail.html",
         {
-            "certificate": certificate,
+            "certificate": certificate
         },
     )
 
 
-# --------------------------------------------------
-# CERTIFICATE VERIFICATION
-# --------------------------------------------------
+# ============================================================
+# VERIFY CERTIFICATE
+# ============================================================
 
 @admin_required
 @require_POST
 def verify_certificate_view(request, certificate_id):
     """
-    Send the admin's verification request to Spring Boot.
+    Verify a certificate using the Spring Boot backend.
 
-    Spring Boot performs the actual business logic.
+    Endpoint used by the service layer:
+
+    GET /api/auth/cert-verification/{certificate_id}/verify
+
+    If the certificate is valid, retrieve its QR code as well.
     """
 
-    result = post_to_spring(
-        f"/api/admin/certificates/{certificate_id}/verify"
-    )
+    try:
+        # ----------------------------------------------------
+        # STEP 1: VERIFY CERTIFICATE
+        # ----------------------------------------------------
 
-    messages.success(
-        request,
-        result.get(
-            "message",
-            "Certificate verification request sent successfully."
-        ),
-    )
+        verification_result = verify_certificate(
+            certificate_id
+        )
 
-    return redirect(
-        "certificate-detail",
-        certificate_id=certificate_id,
-    )
+        if not isinstance(verification_result, dict):
+            messages.error(
+                request,
+                "Invalid response received from the backend."
+            )
+
+            return redirect(
+                "certificate-detail",
+                certificate_id=certificate_id,
+            )
+
+        # ----------------------------------------------------
+        # STEP 2: CHECK VALIDITY
+        # ----------------------------------------------------
+
+        if not verification_result.get("valid", False):
+
+            messages.error(
+                request,
+                "Certificate is INVALID."
+            )
+
+            return redirect(
+                "certificate-detail",
+                certificate_id=certificate_id,
+            )
+
+        # ----------------------------------------------------
+        # STEP 3: GET QR CODE
+        # ----------------------------------------------------
+
+        qr_response = get_certificate_qr(
+            certificate_id
+        )
+
+        qr_base64 = base64.b64encode(
+            qr_response.content
+        ).decode("utf-8")
+
+        # ----------------------------------------------------
+        # STEP 4: DISPLAY VERIFIED CERTIFICATE + QR
+        # ----------------------------------------------------
+
+        return render(
+            request,
+            "certificates/certificate.html",
+            {
+                "certificate": verification_result,
+                "qr_base64": qr_base64,
+            },
+        )
+
+    except CertificateAPIError as exc:
+
+        messages.error(
+            request,
+            str(exc)
+        )
+
+        return redirect(
+            "certificate-detail",
+            certificate_id=certificate_id,
+        )
 
 
-# --------------------------------------------------
+# ============================================================
 # ANALYTICS
-# --------------------------------------------------
+# ============================================================
 
 @admin_required
 def analytics_view(request):
-    """
-    Get analytics data from Spring Boot.
-    """
-# REAL SPRING BOOT IMPLEMENTATION
-    #analytics = get_from_spring(
-        ##"/api/admin/analytics"
-    #)
     analytics = {
         "total_workers": 248,
         "active_workers": 210,
@@ -423,25 +466,21 @@ def analytics_view(request):
         request,
         "analytics/analytics.html",
         {
-            "analytics": analytics,
+            "analytics": analytics
         },
     )
 
 
-# --------------------------------------------------
-# ADMIN PROFILE
-# --------------------------------------------------
+# ============================================================
+# PROFILE
+# ============================================================
 
 @admin_required
 def profile_view(request):
-    """
-    Display the currently logged-in Django admin.
-    """
-
     return render(
         request,
         "profile/profile.html",
         {
-            "admin": request.user,
+            "admin": request.user
         },
     )
