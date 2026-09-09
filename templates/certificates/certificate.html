@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}
+Verified Certificate | KavachAR
+{% endblock %}
+
+{% block page_title %}
+Verified Certificate
+{% endblock %}
+
+{% block content %}
+
+<div class="welcome">
+
+    <h1>
+        🎓 Certificate Verified
+    </h1>
+
+    <p>
+        This certificate has been successfully verified
+        through the KavachAR backend.
+    </p>
+
+</div>
+
+
+<div class="table-container">
+
+    <h2>Certificate Details</h2>
+
+
+    <p>
+        <strong>Certificate ID:</strong>
+        {{ certificate.certificateId }}
+    </p>
+
+
+    <p>
+        <strong>Recipient:</strong>
+        {{ certificate.recipientName }}
+    </p>
+
+
+    <p>
+        <strong>Certificate Title:</strong>
+        {{ certificate.certificateTitle }}
+    </p>
+
+
+    <p>
+        <strong>Issued At:</strong>
+        {{ certificate.issuedAt }}
+    </p>
+
+
+    <p>
+        <strong>Status:</strong>
+
+        {% if certificate.status == "VALID" %}
+
+            🟢 VALID
+
+        {% elif certificate.status == "REVOKED" %}
+
+            🔴 REVOKED
+
+        {% else %}
+
+            {{ certificate.status }}
+
+        {% endif %}
+
+    </p>
+
+
+    <p>
+        <strong>Verification:</strong>
+
+        {% if certificate.valid %}
+
+            ✅ Authentic Certificate
+
+        {% else %}
+
+            ❌ Certificate Could Not Be Verified
+
+        {% endif %}
+
+    </p>
+
+</div>
+
+
+<!-- =========================
+     QR CODE
+========================== -->
+
+<div
+    style="
+        text-align: center;
+        margin-top: 30px;
+        padding: 30px;
+    "
+>
+
+    <h2>
+        Certificate QR Code
+    </h2>
+
+
+    {% if qr_base64 %}
+
+        <img
+            src="data:image/png;base64,{{ qr_base64 }}"
+            alt="Certificate QR Code"
+            style="
+                width: 180px;
+                height: 180px;
+                margin-top: 15px;
+            "
+        >
+
+        <p style="margin-top: 15px;">
+            Scan this QR code to verify this certificate.
+        </p>
+
+    {% else %}
+
+        <p>
+            QR code could not be loaded.
+        </p>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =========================
+     BACK BUTTON
+========================== -->
+
+<div style="margin-top: 25px;">
+
+    <a
+        href="{% url 'certificates' %}"
+        class="btn"
+    >
+        ← Back to Certificates
+    </a>
+
+</div>
+
+{% endblock %}

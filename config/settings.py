@@ -26,8 +26,7 @@ SECRET_KEY = os.getenv(
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
+    "*"
 ]
 
 INSTALLED_APPS = [
@@ -127,7 +126,7 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-
+STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "login"
@@ -137,5 +136,7 @@ LOGOUT_REDIRECT_URL = "/dashboard/login/"
 
 SPRING_BOOT_BASE_URL = os.getenv(
     "SPRING_BOOT_BASE_URL",
-    "http://localhost:8080"
+    "https://kavachar-backend.onrender.com"
 )
+
+DJANGO_SERVICE_TOKEN = os.getenv("DJANGO_SERVICE_TOKEN")
