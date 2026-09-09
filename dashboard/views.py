@@ -58,17 +58,18 @@ class AdminLoginView(LoginView):
 def dashboard_view(request):
     data = {
         "total_workers": 248,
+        "active_workers": 210,
         "completed_training": 192,
         "certificates_issued": 156,
-        "pending_certificates": 12,
+        "certificates_pending": 12,
+        "average_score": 84.5,
     }
 
     return render(
         request,
         "dashboard/dashboard.html",
-        {
-            "data": data
-        }
+            data
+        
     )
 
 
