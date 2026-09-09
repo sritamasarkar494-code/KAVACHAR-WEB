@@ -1,0 +1,116 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$7WuT4HD0ZSmS9zFdZBj7Oo$rMmIdh7Wa6yS/ciPu0ersgSnXw8O89LvRbU9RMIFlOs=",
+    "last_login": "2026-09-09T12:16:03.697Z",
+    "is_superuser": true,
+    "username": "sritama",
+    "first_name": "Sritama",
+    "last_name": "Sarkar",
+    "email": "sritamasarkar494@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-09-04T23:35:41Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$u0ge4Nmm0TCCksXSlnaCF6$3Da7VdwkLpvMip3bCE/RxTU+DDmMXMZR2DNPHOSzPMA=",
+    "last_login": "2026-09-08T15:06:37.210Z",
+    "is_superuser": false,
+    "username": "Trishit_Majumdar",
+    "first_name": "Trishit",
+    "last_name": "Majumdar",
+    "email": "trishitquantum360@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-09-05T13:14:41Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "b4z5pvrglxjptfu3h3zbqzexmk5i14jh",
+  "fields": {
+    "session_data": ".eJxVjDEOwjAMRe-SGUW2cZqWkb1niJzaogXUSE07Ie4OlTrA-t97_-WSbOuYtmpLmtRdHLrT75ZleNi8A73LfCt-KPO6TNnvij9o9X1Re14P9-9glDp-awodACsFAZHA1AVToM7A2JAhBiBUFBFCiNhiHDLlc8OskVppzL0_sp42sQ:1x4HDf:7Y85Ui0FPKH79VCVB1ls9ZdA5r7mn58nH7U4sFjeR0c",
+    "expire_date": "2026-09-23T12:16:03.734Z"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-09-05T12:43:43.084Z",
+    "user": [
+      "sritama"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "2",
+    "object_repr": "kalyani",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-09-05T13:14:43.094Z",
+    "user": [
+      "sritama"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "3",
+    "object_repr": "Trishit_Majumdar",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-09-05T13:20:58.692Z",
+    "user": [
+      "sritama"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "3",
+    "object_repr": "Trishit_Majumdar",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"First name\", \"Last name\", \"Email address\", \"Staff status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-09-05T13:21:32.551Z",
+    "user": [
+      "sritama"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "1",
+    "object_repr": "sritama",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"First name\", \"Last name\"]}}]"
+  }
+}
+]
